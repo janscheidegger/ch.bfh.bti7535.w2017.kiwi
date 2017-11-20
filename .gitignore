@@ -137,3 +137,4 @@ buildNumber.properties
 .idea/modules.xml
 .idea/vcs.xml
 data-science.iml
+/.idea/
