@@ -5,6 +5,7 @@ import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.SparseInstance;
+import weka.core.converters.TextDirectoryLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +40,7 @@ public class FolderLoader {
         } catch (IOException e) {
             System.err.println(e);
         }
+
     }
 
     private Instance createInstance(Path file) {
