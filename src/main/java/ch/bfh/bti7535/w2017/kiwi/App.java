@@ -1,18 +1,11 @@
 package ch.bfh.bti7535.w2017.kiwi;
 
 import ch.bfh.bti7535.w2017.kiwi.processors.DefaultBaseline;
-import ch.bfh.bti7535.w2017.kiwi.processors.NaiveBayesProcessor;
-import ch.bfh.bti7535.w2017.kiwi.processors.Processor;
 import ch.bfh.bti7535.w2017.kiwi.utils.Utils;
 import edu.stanford.nlp.pipeline.CoreNLPProtos;
-import weka.core.tokenizers.Tokenizer;
-import weka.core.tokenizers.WordTokenizer;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Hello world!
