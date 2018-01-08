@@ -2,21 +2,20 @@ package ch.bfh.bti7535.w2017.kiwi;
 
 import ch.bfh.bti7535.w2017.kiwi.filter.NGramRainbow;
 import ch.bfh.bti7535.w2017.kiwi.filter.Preprocessor;
-import weka.attributeSelection.CfsSubsetEval;
-import weka.attributeSelection.GreedyStepwise;
-import weka.classifiers.Evaluation;
-import weka.classifiers.bayes.NaiveBayes;
-import weka.classifiers.evaluation.output.prediction.HTML;
+import weka.attributeSelection.InfoGainAttributeEval;
+import weka.attributeSelection.Ranker;
 import weka.core.Instances;
 import weka.core.converters.TextDirectoryLoader;
 import weka.core.stemmers.SnowballStemmer;
 import weka.core.stopwords.Rainbow;
 import weka.core.tokenizers.NGramTokenizer;
-import weka.filters.Filter;
-import weka.filters.supervised.attribute.AttributeSelection;
+import weka.core.tokenizers.WordTokenizer;
 
 import java.io.File;
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Hello world!
@@ -28,45 +27,76 @@ public class App {
         loader.setDirectory(new File(App.class.getClassLoader()
                                               .getResource("txt_sentoken")
                                               .toURI()));
-        Instances dataSet = loader.getDataSet();
-        System.out.println(dataSet.toSummaryString());
+        Instances initialDataset = loader.getDataSet();
 
-//        AttributeSelection filter = new AttributeSelection();
-//        CfsSubsetEval evaluator = new CfsSubsetEval();
-//        GreedyStepwise search = new GreedyStepwise();
-//        search.setSearchBackwards(true);
-//        filter.setEvaluator(evaluator);
-//        filter.setSearch(search);
-//        filter.setInputFormat(dataSet);
-//        // generate new data
-//        Instances newDataSet = Filter.useFilter(dataSet, filter);
+        List<Preprocessor> preprocessors = Arrays.asList(
+                new Preprocessor.Builder("NGramm 1000/1000")
+                        .withStopwordsHandler(new NGramRainbow())
+                        .withWordsToKeep(1_000)
+                        .withTokenizer(new NGramTokenizer())
+                        .withStemmer(new SnowballStemmer())
+                        .withIDFTransform(true)
+                        .withTFTransform(true)
+                        .withDoNotOperateOnPerClassBasis(true)
+                        .withAttributeSelection(new InfoGainAttributeEval(), new Ranker(), 1000)
+                        .build(),
+                new Preprocessor.Builder("Ngramm 1000/100")
+                        .withStopwordsHandler(new NGramRainbow())
+                        .withWordsToKeep(1_000)
+                        .withTokenizer(new NGramTokenizer())
+                        .withStemmer(new SnowballStemmer())
+                        .withIDFTransform(true)
+                        .withTFTransform(true)
+                        .withDoNotOperateOnPerClassBasis(true)
+                        .withAttributeSelection(new InfoGainAttributeEval(), new Ranker(), 500)
+                        .build(),
+                new Preprocessor.Builder("Ngramm 10000/500")
+                        .withStopwordsHandler(new NGramRainbow())
+                        .withWordsToKeep(10_000)
+                        .withTokenizer(new NGramTokenizer())
+                        .withStemmer(new SnowballStemmer())
+                        .withIDFTransform(true)
+                        .withTFTransform(true)
+                        .withDoNotOperateOnPerClassBasis(true)
+                        .withAttributeSelection(new InfoGainAttributeEval(), new Ranker(), 500)
+                        .build()
+                , new Preprocessor.Builder("Normal Tokenize")
+                        .withStopwordsHandler(new Rainbow())
+                        .withWordsToKeep(1_000)
+                        .withTokenizer(new WordTokenizer())
+                        .withStemmer(new SnowballStemmer())
+                        .withIDFTransform(true)
+                        .withTFTransform(true)
+                        .withDoNotOperateOnPerClassBasis(true)
+                        .withAttributeSelection(new InfoGainAttributeEval(), new Ranker(), 1000)
+                        .build());
 
-        Preprocessor preprocessor = new Preprocessor.Builder()
-                .withStopwordsHandler(new NGramRainbow())
-                .withWordsToKeep(1_000)
-                .withTokenizer(new NGramTokenizer())
-                .withStemmer(new SnowballStemmer())
-                .build();
+
+        List<EvaluationResult> results = new ArrayList<>();
+
+        Evaluator evaluator = new Evaluator();
+
+        preprocessors.forEach((p) -> {
+            try {
+                Instances preprocessedInstances = p.apply(initialDataset);
+                results.add(evaluator.evaluate(preprocessedInstances, p.getConfiguration()));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        });
 
 
-
-        Instances filteredInstances = preprocessor.apply(dataSet);
-        System.out.println(filteredInstances.toSummaryString());
-
-        NaiveBayes model = new NaiveBayes();
-
-        // Do not pre build classifier for 10 Fold Cross Validation
-        //model.buildClassifier(filteredInstances);
-
-        Evaluation eval = new Evaluation(filteredInstances);
-        HTML outputHtml = new HTML();
-        StringBuffer buffer = new StringBuffer();
-        outputHtml.setBuffer(buffer);
-
-        eval.crossValidateModel(model, filteredInstances, 10, new Random(1), outputHtml);
-
-        System.out.println(eval.toSummaryString());
-        System.out.println(eval.toClassDetailsString());
+        for (EvaluationResult er : results) {
+            for (Map.Entry<String, String> configEntry : er.getUsedConfiguration()
+                                                           .entrySet()) {
+                System.out.println(configEntry.getKey() + "\t" + configEntry.getValue());
+            }
+            System.out.println("Correct: " + er.getPercentCorrect());
+            System.out.println("Error: " + er.getPercentIncorrect());
+            System.out.println();
+        }
 
     }
 
