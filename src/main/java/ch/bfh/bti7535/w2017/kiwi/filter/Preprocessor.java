@@ -1,5 +1,6 @@
 package ch.bfh.bti7535.w2017.kiwi.filter;
 
+import ch.bfh.bti7535.w2017.kiwi.attributes.AttributeCreator;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.GainRatioAttributeEval;
 import weka.attributeSelection.Ranker;
@@ -11,14 +12,17 @@ import weka.filters.Filter;
 import weka.filters.supervised.attribute.AttributeSelection;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Preprocessor {
 
     private StringToWordVector stringToWordVector;
     private Map<String, String> configuration = new HashMap<>();
+    private List<AttributeCreator> attributeCreators = new ArrayList<>();
 
     private AttributeSelection attributeSelection = null;
 
@@ -26,18 +30,30 @@ public class Preprocessor {
         stringToWordVector = new StringToWordVector();
     }
 
-    public Instances apply(Instances instances) throws Exception {
+    public Instances apply(Instances saveInstance) throws Exception {
         System.out.println("Applying filter with config: " + Arrays.toString(stringToWordVector.getOptions()));
+
+        Instances instances = new Instances(saveInstance);
+
+        for (AttributeCreator attributeCreator : attributeCreators) {
+            instances = attributeCreator.createAttribute(instances);
+        }
+
 
         try {
             stringToWordVector.setInputFormat(instances);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         Instances result = Filter.useFilter(instances, stringToWordVector);
+
         if (attributeSelection != null) {
-            return applyAttributeSelection(result);
+            result = applyAttributeSelection(result);
+            configuration.put("Number of Attributes", result.numAttributes() + "");
+            return result;
         } else {
+            configuration.put("Number of Attributes", result.numAttributes() + "");
             return result;
         }
 
@@ -90,6 +106,15 @@ public class Preprocessor {
             preprocessor.configuration.put("Do Not Operate On Per Class Basis", String.valueOf(doNotOperateOnPerClassBasis));
 
             preprocessor.stringToWordVector.setDoNotOperateOnPerClassBasis(doNotOperateOnPerClassBasis);
+            return this;
+        }
+
+        public Builder withAttributeCreators(AttributeCreator... attributeCreators) {
+            for (int i = 0; i < attributeCreators.length - 1; i++) {
+                preprocessor.configuration.put("Attribute creator" + i, attributeCreators.getClass()
+                                                                                         .getSimpleName());
+            }
+            this.preprocessor.attributeCreators.addAll(Arrays.asList(attributeCreators));
             return this;
         }
 

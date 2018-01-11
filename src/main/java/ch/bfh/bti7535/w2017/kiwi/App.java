@@ -1,10 +1,12 @@
 package ch.bfh.bti7535.w2017.kiwi;
 
+import ch.bfh.bti7535.w2017.kiwi.attributes.NumExclamationMarks;
+import ch.bfh.bti7535.w2017.kiwi.baseline.SentiWordNetDemo;
 import ch.bfh.bti7535.w2017.kiwi.filter.NGramRainbow;
 import ch.bfh.bti7535.w2017.kiwi.filter.Preprocessor;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
-import ch.bfh.bti7535.w2017.kiwi.baseline.SentiWordNetDemo;
+import weka.core.Attribute;
 import weka.core.Instances;
 import weka.core.converters.TextDirectoryLoader;
 import weka.core.stemmers.SnowballStemmer;
@@ -28,12 +30,15 @@ public class App {
         SentiWordNetDemo classifier = new SentiWordNetDemo();
 
         // negative Files
-        int countNegCorrect=0, countNegWrong=0;
-        File[] negFiles = new File(App.class.getClassLoader().getResource("txt_sentoken/neg").getPath()).listFiles();
-        for (File file: negFiles) {
+        int countNegCorrect = 0, countNegWrong = 0;
+        File[] negFiles = new File(App.class.getClassLoader()
+                                            .getResource("txt_sentoken/neg")
+                                            .getPath()).listFiles();
+        for (File file : negFiles) {
             classifier.load(App.class.getClassLoader()
-                    .getResource("txt_sentoken/neg/" + file.getName()).getPath());
-            if( classifier.classifyAllPOSN() == "no") countNegCorrect++;
+                                     .getResource("txt_sentoken/neg/" + file.getName())
+                                     .getPath());
+            if (classifier.classifyAllPOSN() == "no") countNegCorrect++;
             else countNegWrong++;
         }
         System.out.println("countNegCorrect: " + countNegCorrect);
@@ -41,20 +46,23 @@ public class App {
         System.out.println();
 
         // positive Files
-        int countPosCorrect=0, countPosWrong=0;
-        File[] posFiles = new File(App.class.getClassLoader().getResource("txt_sentoken/pos").getPath()).listFiles();
-        for (File file: posFiles) {
+        int countPosCorrect = 0, countPosWrong = 0;
+        File[] posFiles = new File(App.class.getClassLoader()
+                                            .getResource("txt_sentoken/pos")
+                                            .getPath()).listFiles();
+        for (File file : posFiles) {
             classifier.load(App.class.getClassLoader()
-                    .getResource("txt_sentoken/pos/" + file.getName()).getPath());
-            if( classifier.classifyAllPOSN() == "yes") countPosCorrect++;
+                                     .getResource("txt_sentoken/pos/" + file.getName())
+                                     .getPath());
+            if (classifier.classifyAllPOSN() == "yes") countPosCorrect++;
             else countPosWrong++;
         }
         System.out.println("countPosCorrect: " + countPosCorrect);
         System.out.println("countPosWrong: " + countPosWrong);
         System.out.println();
 
-        System.out.println("Correct: " + (double) Math.round( (countPosCorrect+countNegCorrect) / 2000.0 * 100) / 100);
-        System.out.println("Error: " + (double) Math.round( (countPosWrong+countNegWrong) / 2000.0 * 100) / 100);
+        System.out.println("Correct: " + (double) Math.round((countPosCorrect + countNegCorrect) / 2000.0 * 100) / 100);
+        System.out.println("Error: " + (double) Math.round((countPosWrong + countNegWrong) / 2000.0 * 100) / 100);
         System.out.println();
         // CLASSIFIER       POS_CORRECT POS_WRONG   NEG_CORRECT NEG_WRONG   CORRECT ERROR
         // classifyAllPOSY  899         101         221         779         0.56    0.44
@@ -68,6 +76,7 @@ public class App {
                                               .getResource("txt_sentoken")
                                               .toURI()));
         Instances initialDataset = loader.getDataSet();
+
 
         List<Preprocessor> preprocessors = Arrays.asList(
                 new Preprocessor.Builder("NGramm 1000/1000")
@@ -99,10 +108,21 @@ public class App {
                         .withTFTransform(true)
                         .withDoNotOperateOnPerClassBasis(true)
                         .withAttributeSelection(new InfoGainAttributeEval(), new Ranker(), 500)
-                        .build()
-                , new Preprocessor.Builder("Normal Tokenize")
+                        .build(),
+                new Preprocessor.Builder("Ngramm 10000/500")
+                        .withStopwordsHandler(new NGramRainbow())
+                        .withAttributeCreators(new NumExclamationMarks())
+                        .withWordsToKeep(10_000)
+                        .withTokenizer(new NGramTokenizer())
+                        .withStemmer(new SnowballStemmer())
+                        .withIDFTransform(true)
+                        .withTFTransform(true)
+                        .withDoNotOperateOnPerClassBasis(true)
+                        .withAttributeSelection(new InfoGainAttributeEval(), new Ranker(), 500)
+                        .build(),
+                new Preprocessor.Builder("Normal Tokenize")
                         .withStopwordsHandler(new Rainbow())
-                        .withWordsToKeep(1_000)
+                        .withWordsToKeep(10_000)
                         .withTokenizer(new WordTokenizer())
                         .withStemmer(new SnowballStemmer())
                         .withIDFTransform(true)

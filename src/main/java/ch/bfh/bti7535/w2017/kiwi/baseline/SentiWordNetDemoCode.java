@@ -30,7 +30,7 @@ public class SentiWordNetDemoCode {
 
     public SentiWordNetDemoCode(String pathToSWN) throws IOException {
         // This is our main dictionary representation
-        dictionary = new HashMap<String, Double>();
+        dictionary = new HashMap<>();
 
         // From String to list of doubles.
         HashMap<String, HashMap<Integer, Double>> tempDictionary = new HashMap<String, HashMap<Integer, Double>>();
@@ -83,7 +83,7 @@ public class SentiWordNetDemoCode {
                         // Add map to term if it doesn't have one
                         if (!tempDictionary.containsKey(synTerm)) {
                             tempDictionary.put(synTerm,
-                                    new HashMap<Integer, Double>());
+                                    new HashMap<>());
                         }
 
                         // Add synset link to synterm
