@@ -110,8 +110,8 @@ public class Preprocessor {
         }
 
         public Builder withAttributeCreators(AttributeCreator... attributeCreators) {
-            for (int i = 0; i < attributeCreators.length - 1; i++) {
-                preprocessor.configuration.put("Attribute creator" + i, attributeCreators.getClass()
+            for (int i = 0; i < attributeCreators.length; i++) {
+                preprocessor.configuration.put("Attribute creator" + i, attributeCreators[i].getClass()
                                                                                          .getSimpleName());
             }
             this.preprocessor.attributeCreators.addAll(Arrays.asList(attributeCreators));

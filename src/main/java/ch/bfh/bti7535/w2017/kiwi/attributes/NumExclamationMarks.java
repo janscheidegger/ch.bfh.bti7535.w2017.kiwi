@@ -9,7 +9,7 @@ public class NumExclamationMarks implements AttributeCreator {
 
         instances.insertAttributeAt(new weka.core.Attribute("numExclamation"), instances.numAttributes());
 
-        for (int i = 0; i < instances.numInstances() - 1; i++) {
+        for (int i = 0; i < instances.numInstances(); i++) {
             Instance instance = instances.get(i);
             int count = instance.stringValue(0)
                                 .length() - instance.stringValue(0)
