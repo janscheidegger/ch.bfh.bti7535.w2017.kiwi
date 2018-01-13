@@ -1,4 +1,4 @@
-package ch.bfh.bti7535.w2017.kiwi.baseline;
+package ch.bfh.bti7535.w2017.kiwi.baseline.sentiwordnet;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

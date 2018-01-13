@@ -1,12 +1,11 @@
 package ch.bfh.bti7535.w2017.kiwi;
 
 import ch.bfh.bti7535.w2017.kiwi.attributes.NumExclamationMarks;
-import ch.bfh.bti7535.w2017.kiwi.baseline.SentiWordNetDemo;
+import ch.bfh.bti7535.w2017.kiwi.baseline.sentiwordnet.SentiWordNetDemo;
 import ch.bfh.bti7535.w2017.kiwi.filter.NGramRainbow;
 import ch.bfh.bti7535.w2017.kiwi.filter.Preprocessor;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
-import weka.core.Attribute;
 import weka.core.Instances;
 import weka.core.converters.TextDirectoryLoader;
 import weka.core.stemmers.SnowballStemmer;
@@ -70,6 +69,12 @@ public class App {
         // classifyADJY     856         144         341         659         0.6     0.4
         // classifyADJN     843         157         369         631         0.61    0.39
         // ***************************************************
+
+
+
+
+        /// baseline done ...
+
 
         TextDirectoryLoader loader = new TextDirectoryLoader();
         loader.setDirectory(new File(App.class.getClassLoader()

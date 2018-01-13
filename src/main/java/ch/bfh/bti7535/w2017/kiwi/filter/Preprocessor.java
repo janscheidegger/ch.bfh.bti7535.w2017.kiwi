@@ -5,6 +5,7 @@ import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.GainRatioAttributeEval;
 import weka.attributeSelection.Ranker;
 import weka.core.Instances;
+import weka.core.stemmers.NullStemmer;
 import weka.core.stemmers.Stemmer;
 import weka.core.stopwords.StopwordsHandler;
 import weka.core.tokenizers.Tokenizer;
@@ -118,13 +119,23 @@ public class Preprocessor {
             return this;
         }
 
+        /**
+         * Sets whether if the word frequencies in a document should be transformed
+         * into: <br>
+         * fij*log(num of Docs/num of Docs with word i) <br>
+         * where fij is the frequency of word i in document(instance) j.
+         *
+         * @param idfTransform true if the word frequecies are to be transformed
+         */
         public Builder withIDFTransform(boolean idfTransform) {
             preprocessor.configuration.put("IDF Transform", String.valueOf(idfTransform));
             preprocessor.stringToWordVector.setIDFTransform(idfTransform);
             return this;
         }
 
-
+        /**
+         * The StopwordsHandler you wish to use.
+         */
         public Builder withStopwordsHandler(StopwordsHandler stopwordsHandler) {
             preprocessor.configuration.put("Stopwords Handler", stopwordsHandler.getClass()
                                                                                 .getSimpleName());
@@ -132,6 +143,9 @@ public class Preprocessor {
             return this;
         }
 
+        /**
+         * the stemming algorithm to use
+         */
         public Builder withStemmer(Stemmer stemmer) {
             preprocessor.configuration.put("Stemmer", stemmer.getClass()
                                                              .getSimpleName());
@@ -139,13 +153,23 @@ public class Preprocessor {
             return this;
         }
 
-
+        /**
+         * Sets the number of words (per class) to attempt to keep.
+         *
+         * @param wordsToKeep
+         * @return
+         */
         public Builder withWordsToKeep(int wordsToKeep) {
             preprocessor.configuration.put("Words To Keep", String.valueOf(wordsToKeep));
             preprocessor.stringToWordVector.setWordsToKeep(wordsToKeep);
             return this;
         }
 
+        /**
+         * the tokenizer algorithm to use.
+         * @param tokenizer
+         * @return
+         */
         public Builder withTokenizer(Tokenizer tokenizer) {
             preprocessor.configuration.put("Tokenizer", tokenizer.getClass()
                                                                  .getSimpleName());

@@ -1,4 +1,4 @@
-package ch.bfh.bti7535.w2017.kiwi.baseline;
+package ch.bfh.bti7535.w2017.kiwi.baseline.sentiwordnet;
 
 //    Copyright 2013 Petter Törnberg
 //
