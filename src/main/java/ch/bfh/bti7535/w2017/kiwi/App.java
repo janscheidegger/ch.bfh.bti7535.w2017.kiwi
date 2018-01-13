@@ -4,6 +4,8 @@ import ch.bfh.bti7535.w2017.kiwi.attributes.NumExclamationMarks;
 import ch.bfh.bti7535.w2017.kiwi.baseline.sentiwordnet.SentiWordNetDemo;
 import ch.bfh.bti7535.w2017.kiwi.filter.NGramRainbow;
 import ch.bfh.bti7535.w2017.kiwi.filter.Preprocessor;
+import ch.bfh.bti7535.w2017.kiwi.processors.DefaultBaseline;
+import ch.bfh.bti7535.w2017.kiwi.utils.Utils;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
 import weka.core.Instances;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Hello world!
@@ -74,6 +77,28 @@ public class App {
 
 
         /// baseline done ...
+
+
+        // baseline 2
+
+        // Processor processor = new NaiveBayesProcessor();
+        // processor.process();
+
+        DefaultBaseline baseline = new DefaultBaseline();
+
+        List<String>  positiveWords = ch.bfh.bti7535.w2017.kiwi.utils.Tokenizer.tokenize(Utils.positiveReviews());
+        List<String>  negativeWords = ch.bfh.bti7535.w2017.kiwi.utils.Tokenizer.tokenize(Utils.negativeReviews());
+
+        List<CoreNLPProtos.Sentiment> pos = positiveWords
+                .stream()
+                .map(baseline::count)
+                .collect(Collectors.toList());
+        List<CoreNLPProtos.Sentiment> neg = negativeWords
+                .stream()
+                .map(baseline::count)
+                .collect(Collectors.toList());
+
+
 
 
         TextDirectoryLoader loader = new TextDirectoryLoader();
