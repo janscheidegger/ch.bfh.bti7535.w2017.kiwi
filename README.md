@@ -1,25 +1,20 @@
-# ch.bfh.bti7535.w2017.kiwi
+# Sentiment Analysis of IMDB Reviews
 
-https://trello.com/b/EkCBxF5q/backlog
+## How to Start
 
+add lib/snowball-20051019.jar to classpath and run App.java
 
-### Tasks:
+## How to try new Evaluations
 
-1) text to be analyzed: pre-classified data set
-2) design and implement an SA algorithm
-
-    a) baseline: counting sentiment words
-    
-    b) sentiment classification with NaiveBayes
-    - features? implement your own idea(s) 
-
-3) evaluate implementation
-    -  10-fold cross validation (stratified) 
-    - metric: accuracy
-    - compare against
-    
-        a) gold standard
-        
-        b) baseline
-        
-        c) different iterations of your algorithm
+* Create a new Configuration with the Preprocessor
+* Configure:
+    * Stopword Handler
+    * Number of words to keep for Naive Bayes
+    * Tokenizer
+    * Stemmer
+    * Idf Tranform True/False
+    * TF Transform True/False
+    * Attribute Selection/Attributes to keep after selection
+    * Own Features implementing the AttributeCreator Interface
+* Name your Configuration
+* Compare against others
