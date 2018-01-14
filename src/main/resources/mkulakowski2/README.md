@@ -1,0 +1,1 @@
+negative-words.txt and positive-words.txt taken from https://gist.github.com/mkulakowski2 Thanks!:-)

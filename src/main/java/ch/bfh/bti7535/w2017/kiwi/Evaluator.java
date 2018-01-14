@@ -7,6 +7,10 @@ import weka.core.Instances;
 import java.util.Map;
 import java.util.Random;
 
+
+/**
+ * {@link Evaluator} class used to evaluate the results.
+ */
 public class Evaluator {
 
     public EvaluationResult evaluate(Instances instances, Map<String, String> usedConfig) throws Exception {
@@ -16,7 +20,6 @@ public class Evaluator {
         eval.crossValidateModel(model, instances, 10, new Random(1));
 
         return new EvaluationResult(eval.pctCorrect(), eval.pctIncorrect(), usedConfig);
-
     }
 
 }
