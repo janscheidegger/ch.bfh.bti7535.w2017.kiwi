@@ -38,9 +38,11 @@ public class OpinionLexiconBaseline {
         }
         if (count > 0) {
             return POSITIVE;
-        } else if (count < 0) {
+        }
+        else if (count < 0) {
             return NEGATIVE;
-        } else {
+        }
+        else {
             return NEUTRAL;
         }
     }

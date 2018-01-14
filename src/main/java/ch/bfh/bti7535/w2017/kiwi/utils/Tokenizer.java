@@ -1,5 +1,6 @@
 package ch.bfh.bti7535.w2017.kiwi.utils;
 
+import com.google.common.collect.Lists;
 import weka.core.tokenizers.WordTokenizer;
 
 import java.util.ArrayList;
@@ -19,6 +20,13 @@ public class Tokenizer {
      * @return
      */
     public static Stream<String> tokenize(String line) {
+        List<String> words = new ArrayList<>();
+        String[] tokenized = line.split(" ");
+        words.addAll(Lists.newArrayList(tokenized));
+        return words.stream();
+    }
+
+    public static Stream<String> wordtokenizer(String line) {
         weka.core.tokenizers.Tokenizer tokenizer = new WordTokenizer();
         List<String> words = new ArrayList<>();
         tokenizer.tokenize(line);
@@ -27,4 +35,5 @@ public class Tokenizer {
         }
         return words.stream();
     }
+
 }

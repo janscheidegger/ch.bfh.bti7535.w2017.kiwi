@@ -3,31 +3,29 @@ package ch.bfh.bti7535.w2017.kiwi;
 import ch.bfh.bti7535.w2017.kiwi.attributes.NumExclamationMarks;
 import ch.bfh.bti7535.w2017.kiwi.baseline.opinionlexicon.OpinionLexiconBaseline;
 import ch.bfh.bti7535.w2017.kiwi.baseline.sentiwordnet.SentiWordNetDemo;
-import ch.bfh.bti7535.w2017.kiwi.filter.NGramRainbow;
-import ch.bfh.bti7535.w2017.kiwi.filter.PorterStemmerMapper;
-import ch.bfh.bti7535.w2017.kiwi.filter.Preprocessor;
-import ch.bfh.bti7535.w2017.kiwi.filter.StopwordFilter;
+import ch.bfh.bti7535.w2017.kiwi.filter.*;
 import ch.bfh.bti7535.w2017.kiwi.utils.Tokenizer;
 import ch.bfh.bti7535.w2017.kiwi.utils.Utils;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
+import weka.classifiers.Evaluation;
+import weka.classifiers.bayes.NaiveBayes;
 import weka.core.Instances;
 import weka.core.converters.TextDirectoryLoader;
 import weka.core.stemmers.SnowballStemmer;
 import weka.core.stopwords.Rainbow;
 import weka.core.tokenizers.NGramTokenizer;
 import weka.core.tokenizers.WordTokenizer;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.StringToWordVector;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Hello world!
+ * Application entry point.
  */
 public class App {
 
@@ -104,13 +102,19 @@ public class App {
                 .collect(Collectors.toList());
 
         List<OpinionLexiconBaseline.Sentiment> positiveSentiments = positiveWords.stream()
-                .map(StopwordFilter::filter)
-                .map(PorterStemmerMapper::stem)
+                //.map(StopwordFilter::filter)
+                .map(UnusedCharacterFilter::filter)
+                .map(CharacterReplacerFilter::filter)
+                .map(NegationFilter::filter)
+                //.map(SnowballStemmerMapper::stem)
                 .map(baseline::classify)
                 .collect(Collectors.toList());
         List<OpinionLexiconBaseline.Sentiment> negativeSentiments = negativeWords.stream()
-                .map(StopwordFilter::filter)
-                .map(PorterStemmerMapper::stem)
+                //.map(StopwordFilter::filter)
+                .map(UnusedCharacterFilter::filter)
+                .map(CharacterReplacerFilter::filter)
+                .map(NegationFilter::filter)
+                //.map(SnowballStemmerMapper::stem)
                 .map(baseline::classify)
                 .collect(Collectors.toList());
 
