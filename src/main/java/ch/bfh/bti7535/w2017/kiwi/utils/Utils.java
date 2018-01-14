@@ -39,7 +39,11 @@ public class Utils {
         return readWords(findResource("mkulakowski2/positive-words.txt"));
     }
 
-    private static Set<String> readWords(String filename){
+    public static Set<String> readStopwords(){
+        return readWords(findResource("stopwordlist.txt"));
+    }
+
+    public static Set<String> readWords(String filename){
         try {
             return IOUtils.readLines(new FileInputStream(new File(filename)), Charset.forName("UTF-8"))
                     .stream().filter(l -> { return !l.startsWith(";") && l.length() > 0; }).collect(Collectors.toSet());

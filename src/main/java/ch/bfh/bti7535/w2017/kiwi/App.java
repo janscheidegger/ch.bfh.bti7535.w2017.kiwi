@@ -1,10 +1,13 @@
 package ch.bfh.bti7535.w2017.kiwi;
 
 import ch.bfh.bti7535.w2017.kiwi.attributes.NumExclamationMarks;
+import ch.bfh.bti7535.w2017.kiwi.baseline.opinionlexicon.OpinionLexiconBaseline;
 import ch.bfh.bti7535.w2017.kiwi.baseline.sentiwordnet.SentiWordNetDemo;
 import ch.bfh.bti7535.w2017.kiwi.filter.NGramRainbow;
+import ch.bfh.bti7535.w2017.kiwi.filter.PorterStemmerMapper;
 import ch.bfh.bti7535.w2017.kiwi.filter.Preprocessor;
-import ch.bfh.bti7535.w2017.kiwi.processors.DefaultBaseline;
+import ch.bfh.bti7535.w2017.kiwi.filter.StopwordFilter;
+import ch.bfh.bti7535.w2017.kiwi.utils.Tokenizer;
 import ch.bfh.bti7535.w2017.kiwi.utils.Utils;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
@@ -21,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Hello world!
@@ -29,6 +33,7 @@ public class App {
 
     public static void main(String[] args) throws Exception {
         // BASELINE
+        System.out.println("------ BASELINE 1 ------ ");
         SentiWordNetDemo classifier = new SentiWordNetDemo();
 
         // negative Files
@@ -40,8 +45,12 @@ public class App {
             classifier.load(App.class.getClassLoader()
                                      .getResource("txt_sentoken/neg/" + file.getName())
                                      .getPath());
-            if (classifier.classifyAllPOSN() == "no") countNegCorrect++;
-            else countNegWrong++;
+            if (classifier.classifyAllPOSN() == "no"){
+                countNegCorrect++;
+            }
+            else {
+                countNegWrong++;
+            }
         }
         System.out.println("countNegCorrect: " + countNegCorrect);
         System.out.println("countNegWrong: " + countNegWrong);
@@ -56,8 +65,12 @@ public class App {
             classifier.load(App.class.getClassLoader()
                                      .getResource("txt_sentoken/pos/" + file.getName())
                                      .getPath());
-            if (classifier.classifyAllPOSN() == "yes") countPosCorrect++;
-            else countPosWrong++;
+            if (classifier.classifyAllPOSN() == "yes"){
+                countPosCorrect++;
+            }
+            else {
+                countPosWrong++;
+            }
         }
         System.out.println("countPosCorrect: " + countPosCorrect);
         System.out.println("countPosWrong: " + countPosWrong);
@@ -74,39 +87,39 @@ public class App {
         // ***************************************************
 
 
-
-
-        /// baseline done ...
-
-
         // baseline 2
+        System.out.println("\n\n------ BASELINE 2 ------ ");
+        OpinionLexiconBaseline baseline = new OpinionLexiconBaseline();
+        List<String> positiveReviews = Utils.positiveReviews();
+        List<String> negativeReviews = Utils.negativeReviews();
 
-        // Processor processor = new NaiveBayesProcessor();
-        // processor.process();
-
-        DefaultBaseline baseline = new DefaultBaseline();
-
-        List<String>  positiveWords = ch.bfh.bti7535.w2017.kiwi.utils.Tokenizer.tokenize(Utils.positiveReviews());
-        List<String>  negativeWords = ch.bfh.bti7535.w2017.kiwi.utils.Tokenizer.tokenize(Utils.negativeReviews());
-
-        List<CoreNLPProtos.Sentiment> pos = positiveWords
+        List<Stream<String>> positiveWords = positiveReviews
                 .stream()
-                .map(baseline::count)
-                .collect(Collectors.toList());
-        List<CoreNLPProtos.Sentiment> neg = negativeWords
-                .stream()
-                .map(baseline::count)
+                .map(Tokenizer::tokenize)
                 .collect(Collectors.toList());
 
+        List<Stream<String>> negativeWords = negativeReviews
+                .stream()
+                .map(Tokenizer::tokenize)
+                .collect(Collectors.toList());
 
+        List<OpinionLexiconBaseline.Sentiment> positiveSentiments = positiveWords.stream()
+                .map(StopwordFilter::filter)
+                .map(PorterStemmerMapper::stem)
+                .map(baseline::classify)
+                .collect(Collectors.toList());
+        List<OpinionLexiconBaseline.Sentiment> negativeSentiments = negativeWords.stream()
+                .map(StopwordFilter::filter)
+                .map(PorterStemmerMapper::stem)
+                .map(baseline::classify)
+                .collect(Collectors.toList());
 
+        baseline.evaluate(positiveSentiments, negativeSentiments);
+        /// baselines done ...
 
         TextDirectoryLoader loader = new TextDirectoryLoader();
-        loader.setDirectory(new File(App.class.getClassLoader()
-                                              .getResource("txt_sentoken")
-                                              .toURI()));
+        loader.setDirectory(Utils.senTokenBaseDir());
         Instances initialDataset = loader.getDataSet();
-
 
         List<Preprocessor> preprocessors = Arrays.asList(
                 new Preprocessor.Builder("NGramm 1000/1000")

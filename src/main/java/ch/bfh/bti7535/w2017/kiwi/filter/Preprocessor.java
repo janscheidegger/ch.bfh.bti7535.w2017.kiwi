@@ -5,7 +5,6 @@ import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.GainRatioAttributeEval;
 import weka.attributeSelection.Ranker;
 import weka.core.Instances;
-import weka.core.stemmers.NullStemmer;
 import weka.core.stemmers.Stemmer;
 import weka.core.stopwords.StopwordsHandler;
 import weka.core.tokenizers.Tokenizer;
