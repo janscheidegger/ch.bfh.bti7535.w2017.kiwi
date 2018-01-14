@@ -43,7 +43,8 @@ public class App {
             classifier.load(App.class.getClassLoader()
                                      .getResource("txt_sentoken/neg/" + file.getName())
                                      .getPath());
-            if (classifier.classifyAllPOSN() == "no"){
+            if (classifier.classifyAllPOSN()
+                          .equals("no")){
                 countNegCorrect++;
             }
             else {
@@ -63,7 +64,8 @@ public class App {
             classifier.load(App.class.getClassLoader()
                                      .getResource("txt_sentoken/pos/" + file.getName())
                                      .getPath());
-            if (classifier.classifyAllPOSN() == "yes"){
+            if (classifier.classifyAllPOSN()
+                          .equals("yes")){
                 countPosCorrect++;
             }
             else {
@@ -203,6 +205,7 @@ public class App {
                                                            .entrySet()) {
                 System.out.println(configEntry.getKey() + "\t" + configEntry.getValue());
             }
+            System.out.println(er.getUsedConfiguration().get("name"));
             System.out.println("Correct: " + er.getPercentCorrect());
             System.out.println("Error: " + er.getPercentIncorrect());
             System.out.println();

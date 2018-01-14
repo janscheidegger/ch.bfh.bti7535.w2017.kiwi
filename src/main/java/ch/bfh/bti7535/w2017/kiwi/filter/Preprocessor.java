@@ -60,15 +60,8 @@ public class Preprocessor {
     }
 
     public Instances applyAttributeSelection(Instances instances) throws Exception {
-        AttributeSelection filter = new AttributeSelection();
-        GainRatioAttributeEval evaluator = new GainRatioAttributeEval();
-        Ranker search = new Ranker();
-        search.setNumToSelect(1000);
-        filter.setEvaluator(evaluator);
-        filter.setSearch(search);
-        filter.setInputFormat(instances);
 
-        return Filter.useFilter(instances, filter);
+        return Filter.useFilter(instances, attributeSelection);
     }
 
     public Map<String, String> getConfiguration() {
