@@ -8,47 +8,62 @@ import java.util.stream.Stream;
 
 /**
  * Created by nicolasschmid on 4.01.18.
+ *
+ * Filter to replace common characters and replace these with their full term
  */
 public class CharacterReplacerFilter {
 
     public static Stream<String> filter(Stream<String> stream) {
         List<String> wordlist = stream.collect(Collectors.toList());
         List<String> filtered = Lists.newArrayList();
-        wordlist.forEach(w -> {
-            String word = w;
-            if(word.startsWith("\n")){
+        wordlist.forEach(word -> {
+            if (word.contains("'re"))
+            {
+                replaceAndAdd(word,"'re", " are", filtered);
+            }
+            else if (word.contains("'s"))
+            {
+                replaceAndAdd(word,"'s", " is", filtered);
+            }
+            else if (word.contains("'ll"))
+            {
+                replaceAndAdd(word,"'ll", " will", filtered);
+            }
+            else if (word.equalsIgnoreCase("i've"))
+            {
+                replaceAndAdd(word,"i've", "I have", filtered);
+            }
+            else if (word.startsWith("\n"))
+            {
                 word = word.substring(1);
+                filtered.add(word);
             }
-            if(word.endsWith("\n")){
-                word = word.substring(0, word.length()-2);
+            else if (word.endsWith("\n"))
+            {
+                word = word.substring(0, word.length() - 2);
+                filtered.add(word);
             }
-
-            if(word.contains("'")){
-                if(word.contains("'re")){
-                    String replacement = word.replace("'re", " are");
-                    filtered.add(replacement);
-                }
-                else if(word.contains("'s")){
-                    String replacement = word.replace("'s", " is");
-                    filtered.add(replacement);
-                }
-                else if(word.contains("'ll")){
-                    String replacement = word.replace("'ll", " will");
-                    filtered.add(replacement);
-                }
-                else if(word.equalsIgnoreCase("i've")){
-                    String replacement = word.toLowerCase().replace("i've", "I have");
-                    filtered.add(replacement);
-                }
-                else if("don't".equals(word) ||"can't".equals(word)  || "won't".equals(word)
-                        || "wasn't".equals(word) || "hadn't".equals(word) ){
-                    // don't modify, keep for negation filter
-                }
+            else if ("don't".equals(word) || "can't".equals(word) || "won't".equals(word)
+                    || "wasn't".equals(word) || "hadn't".equals(word))
+            {
+                // don't modify, keep for negation filter
+                // ignore
             }
-            else{
-                filtered.add(w);
+            else {
+                filtered.add(word);
             }
         });
         return filtered.stream();
+    }
+
+    private static void replaceAndAdd(String word, String target, String replaceWith, List<String> filtered) {
+        String replacement = word.replace(target, replaceWith);
+        String[] parts = replacement.split(" ");
+        if(parts.length > 0){
+            filtered.add(parts[0]);
+        }
+        if(parts.length > 1){
+            filtered.add(parts[1]);
+        }
     }
 }

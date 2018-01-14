@@ -104,19 +104,19 @@ public class App {
                 .collect(Collectors.toList());
 
         List<OpinionLexiconBaseline.Sentiment> positiveSentiments = positiveWords.stream()
-                //.map(StopwordFilter::filter)
+                .map(StopwordFilter::filter)
                 .map(UnusedCharacterFilter::filter)
                 .map(CharacterReplacerFilter::filter)
                 .map(NegationFilter::filter)
-                //.map(SnowballStemmerMapper::stem)
+                .map(SnowballStemmerMapper::stem)
                 .map(baseline::classify)
                 .collect(Collectors.toList());
         List<OpinionLexiconBaseline.Sentiment> negativeSentiments = negativeWords.stream()
-                //.map(StopwordFilter::filter)
+                .map(StopwordFilter::filter)
                 .map(UnusedCharacterFilter::filter)
                 .map(CharacterReplacerFilter::filter)
                 .map(NegationFilter::filter)
-                //.map(SnowballStemmerMapper::stem)
+                .map(SnowballStemmerMapper::stem)
                 .map(baseline::classify)
                 .collect(Collectors.toList());
 
