@@ -60,6 +60,7 @@ public class Preprocessor {
     }
 
     public Instances applyAttributeSelection(Instances instances) throws Exception {
+        attributeSelection.setInputFormat(instances);
 
         return Filter.useFilter(instances, attributeSelection);
     }
