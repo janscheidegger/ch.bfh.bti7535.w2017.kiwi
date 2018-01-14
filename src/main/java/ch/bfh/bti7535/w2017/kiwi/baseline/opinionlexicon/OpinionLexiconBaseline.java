@@ -52,15 +52,15 @@ public class OpinionLexiconBaseline {
         long countNegWrong = negativeSentiments.stream().filter(sentiment -> sentiment == POSITIVE).count();
         long countNegCorrect = negativeSentiments.size() - countNegWrong;
 
-        System.out.println("countNegCorrect: " + countNegCorrect);
-        System.out.println("countNegWrong: " + countNegWrong);
+        System.out.println("Total Negative Correct: " + countNegCorrect);
+        System.out.println("Total Negative Wrong: " + countNegWrong);
         System.out.println();
 
         long countPosWrong = positiveSentiments.stream().filter(sentiment -> sentiment == NEGATIVE).count();
         long countPosCorrect = positiveSentiments.size() - countPosWrong;
 
-        System.out.println("countPosCorrect: " + countPosCorrect);
-        System.out.println("countPosWrong: " + countPosWrong);
+        System.out.println("Total Positive Correct: " + countPosCorrect);
+        System.out.println("Total Positive Wrong: " + countPosWrong);
         System.out.println();
 
         System.out.println("Correct: " + (double) Math.round((countPosCorrect + countNegCorrect) / 2000.0 * 100) / 100);

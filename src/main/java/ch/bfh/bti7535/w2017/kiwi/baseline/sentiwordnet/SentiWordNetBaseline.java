@@ -1,10 +1,13 @@
 package ch.bfh.bti7535.w2017.kiwi.baseline.sentiwordnet;
 
+import ch.bfh.bti7535.w2017.kiwi.App;
+
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class SentiWordNetDemo {
+public class SentiWordNetBaseline {
 
     /**
      * String that stores the text to guess its polarity.
@@ -14,10 +17,16 @@ public class SentiWordNetDemo {
     /**
      * SentiWordNet object to query the polarity of a word.
      */
-    SentiWordNetDemoCode sentiwordnet = new SentiWordNetDemoCode(getClass().getClassLoader()
+    public SentiWordNetBaselineCode sentiwordnet = new SentiWordNetBaselineCode(getClass().getClassLoader()
             .getResource("sentiWords/SentiWordNet_3.0.0_20130122.txt").getPath());
 
-    public SentiWordNetDemo() throws IOException {
+    public File[] negFiles = new File(App.class.getClassLoader()
+            .getResource("txt_sentoken/neg")
+            .getPath()).listFiles();
+    public File[] posFiles = new File(App.class.getClassLoader()
+            .getResource("txt_sentoken/pos")
+            .getPath()).listFiles();
+    public SentiWordNetBaseline() throws IOException {
     }
 
     /**
@@ -39,6 +48,81 @@ public class SentiWordNetDemo {
         catch (IOException e) {
             System.out.println("Problem found when reading: " + fileName);
         }
+    }
+
+    public void evaluate(boolean weighted) {
+        sentiwordnet.weighted = weighted;
+
+        // negative Files
+        int countNegCorrectAllPosY = 0, countNegWrongAllPosY = 0;
+        int countNegCorrectAllPosN = 0, countNegWrongAllPosN = 0;
+        int countNegCorrectAdjY = 0, countNegWrongAdjY = 0;
+        int countNegCorrectAdjN = 0, countNegWrongAdjN = 0;
+
+        for (File file : negFiles) {
+            this.load(App.class.getClassLoader()
+                    .getResource("txt_sentoken/neg/" + file.getName())
+                    .getPath());
+            if (this.classifyAllPOSY() == "no"){ countNegCorrectAllPosY++; }
+            else { countNegWrongAllPosY++; }
+
+            if (this.classifyAllPOSN() == "no"){ countNegCorrectAllPosN++; }
+            else { countNegWrongAllPosN++; }
+
+            if (this.classifyADJY() == "no"){ countNegCorrectAdjY++; }
+            else { countNegWrongAdjY++; }
+
+            if (this.classifyADJN() == "no"){ countNegCorrectAdjN++; }
+            else { countNegWrongAdjN++; }
+        }
+
+        // positive Files
+        int countPosCorrectAllPosY = 0, countPosWrongAllPosY = 0;
+        int countPosCorrectAllPosN = 0, countPosWrongAllPosN = 0;
+        int countPosCorrectAdjY = 0, countPosWrongAllAdjY = 0;
+        int countPosCorrectAdjN = 0, countPosWrongAllAdjN = 0;
+        for (File file : posFiles) {
+            this.load(App.class.getClassLoader()
+                    .getResource("txt_sentoken/pos/" + file.getName())
+                    .getPath());
+            if (this.classifyAllPOSY() == "yes"){ countPosCorrectAllPosY++; }
+            else { countPosWrongAllPosY++; }
+
+            if (this.classifyAllPOSN() == "yes"){ countPosCorrectAllPosN++; }
+            else { countPosWrongAllPosN++; }
+
+            if (this.classifyADJY() == "yes"){ countPosCorrectAdjY++; }
+            else { countPosWrongAllAdjY++; }
+
+            if (this.classifyADJN() == "yes"){ countPosCorrectAdjN++; }
+            else { countPosWrongAllAdjN++; }
+        }
+        System.out.println("All words, if value = 0 -> rate positive: ");
+        log(countNegCorrectAllPosY, countNegWrongAllPosY, countPosCorrectAllPosY, countPosWrongAllPosY);
+
+        System.out.println("All words, if value = 0 -> rate negative: ");
+        log(countNegCorrectAllPosN, countNegWrongAllPosN, countPosCorrectAllPosN, countPosWrongAllPosN);
+
+        System.out.println("Just the adjectives, if value = 0 -> rate negative: ");
+        log(countNegCorrectAdjY, countNegWrongAdjY, countPosCorrectAdjY, countPosWrongAllAdjY);
+
+        System.out.println("Just the adjectives, if value = 0 -> rate negative: ");
+        log(countNegCorrectAdjN, countNegWrongAdjN, countPosCorrectAdjN, countPosWrongAllAdjN);
+    }
+
+    /**
+     * print on console
+     */
+    public void log( int negCorrect,  int negWrong, int posCorrect, int posWrong) {
+        System.out.println("Total Negative Correct: " + negCorrect);
+        System.out.println("Total Negative Wrong: " + negWrong);
+
+        System.out.println("Total Positive Correct: " + posCorrect);
+        System.out.println("Total Positive Wrong: " + posWrong);
+
+        System.out.println("Correct: " + (double) Math.round((negCorrect + posCorrect) / 2000.0 * 100) / 100);
+        System.out.println("Error: " + (double) Math.round((negWrong + posWrong) / 2000.0 * 100) / 100);
+        System.out.println();
     }
 
     /**
