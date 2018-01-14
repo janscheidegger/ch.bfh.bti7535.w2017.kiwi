@@ -205,7 +205,7 @@ public class App {
                                                            .entrySet()) {
                 System.out.println(configEntry.getKey() + "\t" + configEntry.getValue());
             }
-            System.out.println(er.getUsedConfiguration().get("name"));
+            System.out.println(er.getUsedConfiguration().get("Name"));
             System.out.println("Correct: " + er.getPercentCorrect());
             System.out.println("Error: " + er.getPercentIncorrect());
             System.out.println();
