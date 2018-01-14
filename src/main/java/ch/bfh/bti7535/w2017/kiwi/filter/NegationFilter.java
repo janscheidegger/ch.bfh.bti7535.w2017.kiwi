@@ -10,6 +10,8 @@ import java.util.stream.Stream;
 
 /**
  * Created by nicolasschmid on 4.01.18.
+ *
+ * Filter prefixing negations with NOT_xx.
  */
 public class NegationFilter {
 

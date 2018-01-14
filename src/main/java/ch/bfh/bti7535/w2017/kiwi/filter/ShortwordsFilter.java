@@ -10,6 +10,8 @@ import java.util.stream.Stream;
 
 /**
  * Created by nicolasschmid on 4.01.18.
+ *
+ * Filter removing words shorter than 2 chars.
  */
 public class ShortwordsFilter {
 

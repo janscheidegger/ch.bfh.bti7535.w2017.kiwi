@@ -6,6 +6,7 @@ import ch.bfh.bti7535.w2017.kiwi.baseline.sentiwordnet.SentiWordNetDemo;
 import ch.bfh.bti7535.w2017.kiwi.filter.*;
 import ch.bfh.bti7535.w2017.kiwi.utils.Tokenizer;
 import ch.bfh.bti7535.w2017.kiwi.utils.Utils;
+import opennlp.tools.stemmer.PorterStemmer;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
 import weka.classifiers.Evaluation;
@@ -108,7 +109,8 @@ public class App {
                 .map(UnusedCharacterFilter::filter)
                 .map(CharacterReplacerFilter::filter)
                 .map(NegationFilter::filter)
-                .map(SnowballStemmerMapper::stem)
+                .map(RatingFilter::filter)
+                //.map(PorterStemmerMapper::stem)
                 .map(baseline::classify)
                 .collect(Collectors.toList());
         List<OpinionLexiconBaseline.Sentiment> negativeSentiments = negativeWords.stream()
@@ -116,7 +118,8 @@ public class App {
                 .map(UnusedCharacterFilter::filter)
                 .map(CharacterReplacerFilter::filter)
                 .map(NegationFilter::filter)
-                .map(SnowballStemmerMapper::stem)
+                .map(RatingFilter::filter)
+                //.map(PorterStemmerMapper::stem)
                 .map(baseline::classify)
                 .collect(Collectors.toList());
 

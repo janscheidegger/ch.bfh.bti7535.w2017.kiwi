@@ -2,6 +2,9 @@ package ch.bfh.bti7535.w2017.kiwi.filter;
 
 import weka.core.stopwords.Rainbow;
 
+/**
+ * NGramRainbow.
+ */
 public class NGramRainbow extends Rainbow {
     @Override
     protected boolean is(String word) {
